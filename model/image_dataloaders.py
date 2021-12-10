@@ -54,7 +54,7 @@ def make_train_val_dataloaders(train_datapath, val_datapath, train_transform, va
 
 
 def make_test_dataloader(test_datapath, test_transform, num_workers):
-    test_dataset, test_size = make_dataset(datapath, test_transform, is_test=True)
+    test_dataset, test_size = make_dataset(test_datapath, test_transform, is_test=True)
 
     test_loader = DataLoader(test_dataset,
                              batch_size=test_size,
