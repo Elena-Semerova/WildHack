@@ -4,7 +4,7 @@ import time
 def train(model, train_dataloader, val_dataloader, train_size, val_size, criterion, optimizer, scheduler, device, num_epochs=25, mode=None):
     start = time.time()
 
-    best_acc = 0
+    best_acc = 0.0
     best_model_wts = model.state_dict()
 
     for epoch in range(num_epochs):
@@ -13,19 +13,19 @@ def train(model, train_dataloader, val_dataloader, train_size, val_size, criteri
         print('-' * 50)
 
         train_epoch(model, train_dataloader, train_size, criterion, optimizer, scheduler, device)
-        val_acc = val_epoch(model, val_dataloader, val_size, criterion, optimizer, scheduler, device)
+        val_acc = val_epoch(model, val_dataloader, val_size, criterion, optimizer, device)
 
-        if val_acc > best_acc:
+        if val_acc >= best_acc:
             best_acc = val_acc
             best_model_wts = model.state_dict()
-
+        
         time_epoch = time.time() - start_epoch
         print('Time for epoch {:.0f}m {:.0f}s\n'.format(time_epoch // 60, time_epoch % 60))
 
     time_training = time.time() - start
 
     print('Training complete in {:.0f}m {:.0f}s'.format(time_training // 60, time_training % 60))
-    print('Best val acc: {:4f}'.format(best_acc))
+    print('Best val acc: {:.4f}'.format(best_acc))
 
     model.load_state_dict(best_model_wts)
 
@@ -36,10 +36,11 @@ def train(model, train_dataloader, val_dataloader, train_size, val_size, criteri
 
 
 def train_epoch(model, dataloader, dataset_size, criterion, optimizer, scheduler, device):
-    scheduler.step()
     model.train()
+    scheduler.step()
 
-    loss, acc = 0.0, 0
+    train_loss = 0.0
+    train_acc = 0
 
     for data in dataloader:
         inputs, labels = data
@@ -55,19 +56,19 @@ def train_epoch(model, dataloader, dataset_size, criterion, optimizer, scheduler
 
         optimizer.step()
 
-        loss += loss.item()
-        acc += torch.sum(preds == labels).type(torch.float)
+        train_loss += loss.item()
+        train_acc += torch.sum(preds == labels).type(torch.float)
 
-    epoch_loss = loss / dataset_size
-    epoch_acc = acc / dataset_size
+    epoch_loss = train_loss / dataset_size
+    epoch_acc = train_acc / dataset_size
 
     print('\t train loss: {:.4f} \t train acc: {:.4f}'.format(epoch_loss, epoch_acc))
 
+def val_epoch(model, dataloader, dataset_size, criterion, optimizer, device):
+    model.train(False)
 
-def val_epoch(model, dataloader, dataset_size, criterion, optimizer, scheduler, device):
-    model.eval()
-
-    loss, acc = 0.0, 0
+    val_loss = 0.0
+    val_acc = 0
 
     for data in dataloader:
         inputs, labels = data
@@ -80,11 +81,11 @@ def val_epoch(model, dataloader, dataset_size, criterion, optimizer, scheduler, 
 
         loss = criterion(outputs, labels)
 
-        loss += loss.item()
-        acc += torch.sum(preds == labels).type(torch.float)
+        val_loss += loss.item()
+        val_acc += torch.sum(preds == labels).type(torch.float)
 
-    epoch_loss = loss / dataset_size
-    epoch_acc = acc / dataset_size
+    epoch_loss = val_loss / dataset_size
+    epoch_acc = val_acc / dataset_size
 
     print('\t val loss: {:.4f} \t val acc: {:.4f}'.format(epoch_loss, epoch_acc))
 
