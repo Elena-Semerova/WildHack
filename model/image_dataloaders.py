@@ -29,7 +29,7 @@ class AnimalTestDataset(Dataset):
 
 def make_dataset(datapath, transform, is_test=False):
     if is_test:
-        image_dataset = AnimalDataset(datapath, transform)
+        image_dataset = AnimalTestDataset(datapath, transform)
     else:
         image_dataset = datasets.ImageFolder(datapath, transform)
 
