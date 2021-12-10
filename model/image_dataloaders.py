@@ -5,7 +5,7 @@ from PIL import Image
 
 class AnimalTestDataset(Dataset):
     def __init__(self, datapath, transform=None):
-        super(AnimalDataset).__init__()
+        super(AnimalTestDataset).__init__()
         self.datapath = datapath
         self.files = os.listdir(self.datapath)
 
