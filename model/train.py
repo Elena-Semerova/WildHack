@@ -39,7 +39,7 @@ def train_epoch(model, dataloader, dataset_size, criterion, optimizer, scheduler
     scheduler.step()
     model.train()
 
-    loss, acc = 0, 0
+    loss, acc = 0.0, 0
 
     for data in dataloader:
         inputs, labels = data
@@ -67,7 +67,7 @@ def train_epoch(model, dataloader, dataset_size, criterion, optimizer, scheduler
 def val_epoch(model, dataloader, dataset_size, criterion, optimizer, scheduler, device):
     model.eval()
 
-    loss, acc = 0, 0
+    loss, acc = 0.0, 0
 
     for data in dataloader:
         inputs, labels = data
