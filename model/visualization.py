@@ -17,9 +17,9 @@ def imshow(inp, title=None):
     plt.pause(0.1)
 
 
-def visualize_predictions(model, dataloader, class_names, num_images=8):
+def visualize_predictions(model, dataloader, class_names, device, num_images=8):
     inputs, classes = next(iter(dataloader))
-    classes_val = torch.argmax(model(inputs), dim=-1)
+    classes_val = torch.argmax(model(inputs.to(device)), dim=-1)
     out = torchvision.utils.make_grid(inputs)
 
     imshow(out, title=[class_names[x] for x in classes_val])
